@@ -2,31 +2,30 @@ res.setHeader("Access-Control-Allow-Origin", "https://kivro-games.vercel.app");
 res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
 res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-if (req.method === "OPTIONS") {
-    return res.status(200).end();
-}
-
-
-import cors from "./_cors";
+// api/visitors.js
 import fs from "fs";
 import path from "path";
 
-function handler(req, res) {
-  const filePath = path.join(process.cwd(), "visitors.json");
+export default function handler(req, res) {
+    res.setHeader("Access-Control-Allow-Origin", "https://kivro-games.vercel.app");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    if (req.method === "OPTIONS") return res.status(200).end();
 
-  if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify({ total: 0 }), "utf8");
-  }
+    const file = path.join(process.cwd(), "data.json");
 
-  const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    let data = { visitors: [] };
 
-  // Only count when frontend says increase:true
-  if (req.method === "POST" && req.body?.increase === true) {
-    data.total++;
-    fs.writeFileSync(filePath, JSON.stringify(data), "utf8");
-  }
+    try {
+        data = JSON.parse(fs.readFileSync(file, "utf8"));
+    } catch (err) {}
 
-  return res.status(200).json({ total: data.total });
+    const ip = req.headers["x-forwarded-for"]?.split(",")[0] || "unknown";
+
+    if (!data.visitors.includes(ip)) {
+        data.visitors.push(ip);
+        fs.writeFileSync(file, JSON.stringify(data, null, 2));
+    }
+
+    res.status(200).json({ totalVisitors: data.visitors.length });
 }
-
-export default cors(handler);
