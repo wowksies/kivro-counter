@@ -1,22 +1,19 @@
-res.setHeader("Access-Control-Allow-Origin", "https://kivro-games.vercel.app");
-res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
 // api/online.js
+import cors from "./_cors";
+
 let onlineUsers = 0;
 
-export default function handler(req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "https://kivro-games.vercel.app");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    if (req.method === "OPTIONS") return res.status(200).end();
+function handler(req, res) {
+  if (req.method === "POST") {
+    onlineUsers++;
+    return res.status(200).json({ online: onlineUsers });
+  }
 
-    if (req.method === "POST") {
-        onlineUsers++;
-        return res.status(200).json({ online: onlineUsers });
-    }
+  if (req.method === "GET") {
+    return res.status(200).json({ online: onlineUsers });
+  }
 
-    if (req.method === "GET") {
-        return res.status(200).json({ online: onlineUsers });
-    }
+  res.status(405).json({ error: "Method not allowed" });
 }
+
+export default cors(handler);
