@@ -1,3 +1,12 @@
+res.setHeader("Access-Control-Allow-Origin", "https://kivro-games.vercel.app");
+res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+if (req.method === "OPTIONS") {
+    return res.status(200).end();
+}
+
+
 import cors from "./_cors";
 import fs from "fs";
 import path from "path";
