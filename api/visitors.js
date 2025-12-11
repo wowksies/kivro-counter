@@ -11,7 +11,7 @@ function handler(req, res) {
 
   const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
 
-  // Only increase IF client said so
+  // Only count when frontend says increase:true
   if (req.method === "POST" && req.body?.increase === true) {
     data.total++;
     fs.writeFileSync(filePath, JSON.stringify(data), "utf8");
