@@ -10,8 +10,12 @@ function handler(req, res) {
   }
 
   const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
-  data.total++;
-  fs.writeFileSync(filePath, JSON.stringify(data), "utf8");
+
+  // Only increase IF client said so
+  if (req.method === "POST" && req.body?.increase === true) {
+    data.total++;
+    fs.writeFileSync(filePath, JSON.stringify(data), "utf8");
+  }
 
   return res.status(200).json({ total: data.total });
 }
