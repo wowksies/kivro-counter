@@ -1,11 +1,11 @@
 // api/online.js
 import cors from "./_cors";
 
-let onlineUsers = 0;
+let onlineUsers = "Work In Progress";
 
 function handler(req, res) {
   if (req.method === "POST") {
-    onlineUsers++;
+    onlineUsers + 1;
     return res.status(200).json({ online: onlineUsers });
   }
 
